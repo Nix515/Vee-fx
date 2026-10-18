@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VEE FX | Master Security Switch & Notification Panel</title>
+
+  <!-- Google Analytics Tracking -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XSSW65TWEE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XSSW65TWEE');
+  </script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  
+  <!-- EmailJS SDK for automated notification dispatch -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function(){
+      emailjs.init({ publicKey: "YOUR_EMAILJS_PUBLIC_KEY" }); // Replace with your EmailJS public key
+    })();
+  </script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDglPYCIZLTbTOMl7cZvZ_GwPeKzacAfhw",
+      authDomain: "vee-fxx.firebaseapp.com",
+      databaseURL: "https://vee-fxx-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "vee-fxx",
+      storageBucket: "vee-fxx.firebasestorage.app",
+      messagingSenderId: "924394563283",
+      appId: "1:924394563283:web:cfd15221909ad761f39626",
+      measurementId: "G-XSSW65TWEE"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
+
+  <style>
+    :root {
+      --bg-alice: #f4f6f8;
+      --text-dark: #333333;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --accent: #1e293b;
+      --accent-hover: #334155;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background-color: var(--bg-alice); color: var(--text-dark); line-height: 1.5; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 2rem; width: 100%; max-width: 450px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); text-align: center; }
+    .btn { background: var(--accent); color: white; padding: 0.6rem 1.2rem; border-radius: 4px; border: none; cursor: pointer; font-size: 0.9rem; font-weight: bold; width: 100%; margin-top: 1rem; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-danger { background: var(--danger); }
+    .btn-success { background: var(--success); }
+    .status-badge { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 20px; font-weight: bold; font-size: 0.85rem; margin-bottom: 1.5rem; text-transform: uppercase; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1 style="font-size: 1.25rem; margin-bottom: 0.5rem;">VEE FX Security Switch</h1>
+    <p style="color: #64748b; font-size: 0.85rem; margin-bottom: 1.5rem;">Control master dashboard availability securely. All database records remain fully intact when switched off.</p>
+    
+    <div id="statusContainer">
+      <span class="status-badge" id="statusBadge" style="background:#cbd5e1; color:#333;">Loading status...</span>
+    </div>
+
+    <button class="btn btn-success" id="enableBtn" onclick="toggleDashboardState(true)" style="display:none;">Enable Master Dashboard</button>
+    <button class="btn btn-danger" id="disableBtn" onclick="toggleDashboardState(false)" style="display:none;">Disable Master Dashboard</button>
+    
+    <div style="margin-top: 1.5rem;">
+      <a href="master-dashboard.html" style="font-size: 0.8rem; color: #0d6efd; text-decoration: underline;">Return to Master Dashboard</a>
+    </div>
+  </div>
+
+  <script>
+    let currentState = true;
+
+    database.ref('masterSwitchState').on('value', (snapshot) => {
+      const val = snapshot.val();
+      currentState = (val !== false); // default to true if null
+      const badge = document.getElementById('statusBadge');
+      const enableBtn = document.getElementById('enableBtn');
+      const disableBtn = document.getElementById('disableBtn');
+
+      if (currentState) {
+        badge.innerText = 'Status: ACTIVE (ONLINE)';
+        badge.style.background = '#d1e7dd';
+        badge.style.color = '#198754';
+        enableBtn.style.display = 'none';
+        disableBtn.style.display = 'block';
+      } else {
+        badge.innerText = 'Status: DISABLED (OFFLINE)';
+        badge.style.background = '#f8d7da';
+        badge.style.color = '#dc3545';
+        enableBtn.style.display = 'block';
+        disableBtn.style.display = 'none';
+      }
+    });
+
+    function toggleDashboardState(newState) {
+      database.ref('masterSwitchState').set(newState, (err) => {
+        if (!err) {
+          const actionText = newState ? 'ENABLED' : 'DISABLED';
+          alert('Master Dashboard has been successfully ' + actionText + '. Notification dispatched to nddnix124@gmail.com.');
+
+          // Automatically send alert email to nddnix124@gmail.com via EmailJS
+          emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+            to_email: "nddnix124@gmail.com",
+            action_status: actionText,
+            timestamp: new Date().toUTCString()
+          }).then(() => {
+            console.log("Email notification sent successfully to nddnix124@gmail.com");
+          }, (error) => {
+            console.error("Email dispatch failed:", error);
+          });
+
+        } else {
+          alert('Failed to update emergency switch state.');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
+

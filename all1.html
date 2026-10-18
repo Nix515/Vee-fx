@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VEE FX | Master Admin Dashboard</title>
+
+  <!-- Google Analytics Tracking -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XSSW65TWEE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XSSW65TWEE');
+  </script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDglPYCIZLTbTOMl7cZvZ_GwPeKzacAfhw",
+      authDomain: "vee-fxx.firebaseapp.com",
+      databaseURL: "https://vee-fxx-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "vee-fxx",
+      storageBucket: "vee-fxx.firebasestorage.app",
+      messagingSenderId: "924394563283",
+      appId: "1:924394563283:web:cfd15221909ad761f39626",
+      measurementId: "G-XSSW65TWEE"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
+
+  <style>
+    :root {
+      --bg-alice: #f4f6f8;
+      --text-dark: #333333;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --accent: #1e293b;
+      --accent-hover: #334155;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background-color: var(--bg-alice); color: var(--text-dark); line-height: 1.5; padding-bottom: 50px; font-size: 14px; }
+    
+    header { background: #ffffff; border-bottom: 1px solid var(--border-color); padding: 0.6rem 1rem; position: sticky; top: 0; z-index: 90; }
+    .top-nav { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; }
+    .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-dark); text-decoration: none; }
+    .badge { background: var(--accent); color: #ffffff; font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 10px; text-transform: uppercase; font-weight: bold; }
+
+    .container { max-width: 900px; margin: 1.5rem auto; padding: 0 0.85rem; }
+    .panel { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; margin-bottom: 1.25rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+    .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 0.6rem; margin-bottom: 1rem; }
+    
+    .form-group { margin-bottom: 0.75rem; }
+    .form-group label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 0.25rem; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.55rem; border: 1px solid var(--border-color); border-radius: 4px; font-size: 0.85rem; outline: none; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+    
+    .btn { background: var(--accent); color: white; padding: 0.45rem 0.9rem; border-radius: 4px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-danger { background: var(--danger); }
+    
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 0.5rem; }
+    .data-table th, .data-table td { border: 1px solid var(--border-color); padding: 0.6rem; text-align: left; }
+    .data-table th { background-color: #f8fafc; font-weight: bold; }
+    
+    .message-card { border: 1px solid var(--border-color); border-radius: 6px; padding: 0.85rem; margin-bottom: 0.6rem; background: #fafafa; }
+    .message-meta { display: flex; justify-content: space-between; font-size: 0.75rem; color: #64748b; margin-bottom: 0.3rem; }
+
+    /* Custom VEE FX Modal Styling */
+    .vee-modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:1000; justify-content:center; align-items:center; }
+    .vee-modal-overlay.active { display:flex; }
+    .vee-modal { background:white; border:1px solid var(--border-color); border-radius:8px; width:90%; max-width:400px; padding:1.25rem; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+    .vee-modal h3 { font-size:1.05rem; margin-bottom:0.5rem; color:var(--accent); }
+    .vee-modal p { font-size:0.85rem; color:#475569; margin-bottom:1rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Custom VEE FX Alert / Confirm Modal -->
+  <div class="vee-modal-overlay" id="veeModalOverlay">
+    <div class="vee-modal">
+      <h3 id="veeModalTitle">VEE FX says</h3>
+      <p id="veeModalMessage">Message content goes here...</p>
+      <div id="veeModalInputContainer" style="margin-bottom:1rem; display:none;">
+        <input type="text" id="veeModalInput" style="margin:0;">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px;" id="veeModalButtons">
+        <button class="btn" id="veeModalOkBtn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <header>
+    <div class="top-nav">
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <a href="index.html" class="logo">VEE FX</a>
+        <span class="badge">Master Admin</span>
+      </div>
+      <div style="display:flex; gap:8px;">
+        <a href="admin-switch.html" class="btn" style="background:#dc2626;" title="Emergency Switch Panel">Security Switch</a>
+        <a href="index.html" class="btn" style="background:#16a34a;">Switch to Student Index</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div style="margin-bottom: 1.25rem;">
+      <h1 style="font-size: 1.25rem; margin-bottom: 0.3rem;">Master Platform Control Center</h1>
+      <p style="color: #64748b; font-size: 0.82rem;">Control database records, broadcast official announcements, and moderate all student chats.</p>
+    </div>
+
+    <!-- PANEL: Category Manager -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Lesson Categories Manager</h2></div>
+      <form id="categoryForm" onsubmit="saveCategory(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Category Name</label>
+            <input type="text" id="catName" placeholder="e.g. Advanced Price Action" required>
+            <input type="hidden" id="editCatKey" value="">
+          </div>
+          <div style="display:flex; align-items:flex-end;">
+            <button type="submit" class="btn" id="catSubmitBtn" style="height:36px;">Add Category</button>
+          </div>
+        </div>
+      </form>
+      <div id="adminCategoriesList" style="margin-top:0.75rem; display:flex; flex-direction:column; gap:6px;"></div>
+    </section>
+
+    <!-- PANEL: Featured Curriculum & Insights Manager -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Featured Curriculum & Insights Manager</h2></div>
+      <form id="featuredForm" onsubmit="saveFeaturedItem(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Card Title</label>
+            <input type="text" id="featTitle" placeholder="e.g. Market Structure Modules" required>
+            <input type="hidden" id="editFeatKey" value="">
+          </div>
+          <div class="form-group">
+            <label>Target View / Action Link</label>
+            <select id="featAction">
+              <option value="lessons">Watch Lessons</option>
+              <option value="signals">View Signals</option>
+              <option value="chartroom">Open Chart Room</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Card Description</label>
+          <textarea id="featDesc" rows="2" placeholder="Brief card overview..." required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Preview Image URL (Optional)</label>
+          <input type="text" id="featImg" placeholder="https://images.unsplash.com/...">
+        </div>
+        <button type="submit" class="btn" id="featSubmitBtn">Publish Featured Card</button>
+      </form>
+
+      <div style="margin-top: 1rem;">
+        <h3 style="font-size: 0.9rem; margin-bottom: 0.4rem;">Active Featured Cards</h3>
+        <div id="adminFeaturedList" style="display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+    </section>
+
+    <!-- PANEL 1: Broadcast Official Announcement -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Broadcast Official Message (Charting Room)</h2></div>
+      <form id="officialMsgForm" onsubmit="sendOfficialMessage(event)">
+        <div class="form-group">
+          <label>Official Announcement Text</label>
+          <textarea id="officialText" rows="2" placeholder="Type official notice to inform all students..." required></textarea>
+        </div>
+        <button type="submit" class="btn" style="background:#198754;">Broadcast Official Notice</button>
+      </form>
+    </section>
+
+    <!-- PANEL 2: Global Chat Moderation -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Global Charting Room Moderation (Edit/Delete All)</h2></div>
+      <div id="adminGlobalChatStream" style="max-height: 250px; overflow-y: auto; background: #fafafa; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 4px;">
+        <p style="color:#64748b; font-style:italic;">Loading chat stream...</p>
+      </div>
+    </section>
+
+    <!-- PANEL 3: Reported Messages -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Reported Messages Pending Review</h2></div>
+      <div id="reportedMessagesInbox">
+        <p style="color:#64748b; font-style:italic;">No reported messages pending moderation.</p>
+      </div>
+    </section>
+
+    <!-- PANEL 4: Publish Video Lesson with YouTube Auto-ID & 'v=' parsing -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Publish Video Lesson</h2></div>
+      <form id="addVideoForm" onsubmit="publishLesson(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Lesson Title</label>
+            <input type="text" id="videoTitle" placeholder="e.g. Master Market Structure" required>
+          </div>
+          <div class="form-group">
+            <label>Category Section</label>
+            <select id="videoCategory"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Lesson Description</label>
+          <textarea id="videoDescription" rows="2" placeholder="Brief overview..." required></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Video Type</label>
+            <select id="videoType">
+              <option value="youtube">YouTube Embed URL / Code</option>
+              <option value="local">Direct Video Link (.mp4)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Video URL / Source (e.g. v=N33a0z1Y2p0 or full link)</label>
+            <input type="text" id="videoSrc" placeholder="https://www.youtube.com/watch?v=... or v=..." required>
+          </div>
+        </div>
+        <button type="submit" class="btn">Publish to Students</button>
+      </form>
+    </section>
+
+    <!-- PANEL 5: Active Lessons Manager -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Active Lessons Manager</h2></div>
+      <table class="data-table">
+        <thead><tr><th>Title</th><th>Category</th><th>Type</th><th>Action</th></tr></thead>
+        <tbody id="adminLessonsTable"><tr><td colspan="4">Loading...</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- PANEL 6: Publish Trade Signal with Exact Timestamp -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Publish Trade Signal</h2></div>
+      <form id="addSignalForm" onsubmit="publishSignal(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Currency Pair</label>
+            <input type="text" id="sigPair" placeholder="EUR/USD" required>
+          </div>
+          <div class="form-group">
+            <label>Signal Action</label>
+            <select id="sigType">
+              <option value="BUY">BUY</option>
+              <option value="SELL">SELL</option>
+              <option value="BUY LIMIT">BUY LIMIT</option>
+              <option value="SELL LIMIT">SELL LIMIT</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Entry Price</label><input type="text" id="sigEntry" placeholder="1.0850" required></div>
+          <div class="form-group"><label>Stop Loss (SL)</label><input type="text" id="sigSL" placeholder="1.0810" required></div>
+          <div class="form-group"><label>Take Profit (TP)</label><input type="text" id="sigTP" placeholder="1.0950" required></div>
+        </div>
+        <button type="submit" class="btn">Broadcast Signal</button>
+      </form>
+
+      <h3 style="margin-top: 1rem; margin-bottom: 0.4rem; font-size: 0.9rem;">Active Signals Manager</h3>
+      <table class="data-table">
+        <thead><tr><th>Pair & Action</th><th>Entry / SL / TP</th><th>Published Time (UTC)</th><th>Action</th></tr></thead>
+        <tbody id="adminSignalsTable"><tr><td colspan="4">Loading...</td></tr></tbody>
+      </table>
+    </section>
+
+    <!-- PANEL 7: Student Support Inquiries & Admin Replies -->
+    <section class="panel">
+      <div class="panel-header"><h2 style="font-size: 1.05rem;">Student Support Inquiries & Replies</h2></div>
+      <div id="adminSupportInbox">
+        <p style="color:#64748b;">No pending student messages.</p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Custom Modal System (VEE FX says)
+    function veeAlert(message, callback) {
+      document.getElementById('veeModalTitle').innerText = 'VEE FX says';
+      document.getElementById('veeModalMessage').innerText = message;
+      document.getElementById('veeModalInputContainer').style.display = 'none';
+      const buttonsDiv = document.getElementById('veeModalButtons');
+      buttonsDiv.innerHTML = `<button class="btn" id="veeModalOkBtn">OK</button>`;
+      document.getElementById('veeModalOverlay').classList.add('active');
+      document.getElementById('veeModalOkBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+        if (callback) callback();
+      };
+    }
+
+    function veeConfirm(message, onYes) {
+      document.getElementById('veeModalTitle').innerText = 'VEE FX confirms';
+      document.getElementById('veeModalMessage').innerText = message;
+      document.getElementById('veeModalInputContainer').style.display = 'none';
+      const buttonsDiv = document.getElementById('veeModalButtons');
+      buttonsDiv.innerHTML = `
+        <button class="btn" style="background:#64748b;" id="veeModalNoBtn">Cancel</button>
+        <button class="btn btn-danger" id="veeModalYesBtn">Confirm</button>`;
+      document.getElementById('veeModalOverlay').classList.add('active');
+      document.getElementById('veeModalNoBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+      };
+      document.getElementById('veeModalYesBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+        onYes();
+      };
+    }
+
+    function veePrompt(message, defaultValue, onSave) {
+      document.getElementById('veeModalTitle').innerText = 'VEE FX input';
+      document.getElementById('veeModalMessage').innerText = message;
+      const inputContainer = document.getElementById('veeModalInputContainer');
+      const inputField = document.getElementById('veeModalInput');
+      inputContainer.style.display = 'block';
+      inputField.value = defaultValue || '';
+      
+      const buttonsDiv = document.getElementById('veeModalButtons');
+      buttonsDiv.innerHTML = `
+        <button class="btn" style="background:#64748b;" id="veeModalCancelBtn">Cancel</button>
+        <button class="btn" id="veeModalSubmitBtn">Save</button>`;
+      document.getElementById('veeModalOverlay').classList.add('active');
+      inputField.focus();
+
+      document.getElementById('veeModalCancelBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+      };
+      document.getElementById('veeModalSubmitBtn').onclick = () => {
+        const val = inputField.value;
+        document.getElementById('veeModalOverlay').classList.remove('active');
+        if (onSave) onSave(val);
+      };
+    }
+
+    function sendOfficialMessage(e) {
+      e.preventDefault();
+      const text = document.getElementById('officialText').value;
+      database.ref('chartChat').push({
+        sender: 'Master Admin',
+        text: text,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        isOfficial: true
+      }, (err) => {
+        if (!err) {
+          veeAlert('Official announcement broadcasted to charting room!');
+          document.getElementById('officialMsgForm').reset();
+        }
+      });
+    }
+
+    function adminEditMessage(msgKey, oldText) {
+      veePrompt('Admin Edit Message:', oldText, (newText) => {
+        if (newText !== null && newText.trim() !== '') {
+          database.ref('chartChat/' + msgKey).update({ text: newText.trim() });
+        }
+      });
+    }
+
+    function adminDeleteMessage(msgKey) {
+      veeConfirm('Admin: Delete this message?', () => {
+        database.ref('chartChat/' + msgKey).remove();
+      });
+    }
+
+    function deleteReportedMessage(reportId, msgKey) {
+      veeConfirm('Delete this reported message from the system?', () => {
+        database.ref('chartChat/' + msgKey).remove();
+        database.ref('reportedMessages/' + reportId).remove();
+      });
+    }
+
+    function dismissReport(reportId) {
+      database.ref('reportedMessages/' + reportId).remove();
+    }
+
+    function replySupport(inquiryId) {
+      veePrompt('Enter reply to student:', '', (replyText) => {
+        if (!replyText) return;
+        database.ref('supportMessages/' + inquiryId).update({
+          reply: 'Admin: ' + replyText
+        });
+      });
+    }
+
+    // Category Manager functions
+    function saveCategory(e) {
+      e.preventDefault();
+      const name = document.getElementById('catName').value.trim();
+      const key = document.getElementById('editCatKey').value;
+      if (!name) return;
+
+      if (key) {
+        database.ref('categories/' + key).set(name, (err) => {
+          if (!err) { veeAlert('Category updated!'); resetCatForm(); }
+        });
+      } else {
+        database.ref('categories').push(name, (err) => {
+          if (!err) { veeAlert('Category added!'); resetCatForm(); }
+        });
+      }
+    }
+    function editCategory(key, name) {
+      document.getElementById('catName').value = name;
+      document.getElementById('editCatKey').value = key;
+      document.getElementById('catSubmitBtn').innerText = 'Update Category';
+    }
+    function deleteCategory(key) {
+      veeConfirm('Delete this category?', () => database.ref('categories/' + key).remove());
+    }
+    function resetCatForm() {
+      document.getElementById('categoryForm').reset();
+      document.getElementById('editCatKey').value = '';
+      document.getElementById('catSubmitBtn').innerText = 'Add Category';
+    }
+
+    // Featured Curriculum & Insights Manager
+    function saveFeaturedItem(e) {
+      e.preventDefault();
+      const title = document.getElementById('featTitle').value.trim();
+      const desc = document.getElementById('featDesc').value.trim();
+      const action = document.getElementById('featAction').value;
+      const img = document.getElementById('featImg').value.trim();
+      const key = document.getElementById('editFeatKey').value;
+
+      const itemData = { title, desc, action, img };
+      if (key) {
+        database.ref('featuredCards/' + key).set(itemData, (err) => {
+          if (!err) { veeAlert('Featured card updated!'); resetFeatForm(); }
+        });
+      } else {
+        database.ref('featuredCards').push(itemData, (err) => {
+          if (!err) { veeAlert('Featured card created!'); resetFeatForm(); }
+        });
+      }
+    }
+    function editFeatured(key, title, desc, action, img) {
+      document.getElementById('featTitle').value = title;
+      document.getElementById('featDesc').value = desc;
+      document.getElementById('featAction').value = action;
+      document.getElementById('featImg').value = img || '';
+      document.getElementById('editFeatKey').value = key;
+      document.getElementById('featSubmitBtn').innerText = 'Update Featured Card';
+    }
+    function deleteFeatured(key) {
+      veeConfirm('Delete this featured card?', () => database.ref('featuredCards/' + key).remove());
+    }
+    function resetFeatForm() {
+      document.getElementById('featuredForm').reset();
+      document.getElementById('editFeatKey').value = '';
+      document.getElementById('featSubmitBtn').innerText = 'Publish Featured Card';
+    }
+
+    // Publish Lesson with YouTube ID / 'v=' parser
+    function publishLesson(e) {
+      e.preventDefault();
+      let rawSrc = document.getElementById('videoSrc').value.trim();
+      const type = document.getElementById('videoType').value;
+
+      if (type === 'youtube') {
+        let videoId = '';
+        if (rawSrc.includes('v=')) {
+          const urlParams = new URLSearchParams(rawSrc.includes('?') ? rawSrc.split('?')[1] : rawSrc);
+          videoId = urlParams.get('v') || rawSrc.split('v=')[1]?.substring(0, 11);
+        } else if (rawSrc.length === 11 && !rawSrc.includes('/')) {
+          videoId = rawSrc;
+        } else if (rawSrc.includes('youtu.be/')) {
+          videoId = rawSrc.split('youtu.be/')[1]?.split('?')[0];
+        } else if (rawSrc.includes('/embed/')) {
+          videoId = rawSrc.split('/embed/')[1]?.split('?')[0];
+        }
+        if (videoId) {
+          rawSrc = `https://www.youtube.com/embed/${videoId}`;
+        }
+      }
+
+      database.ref('lessons').push({
+        title: document.getElementById('videoTitle').value,
+        category: document.getElementById('videoCategory').value,
+        description: document.getElementById('videoDescription').value,
+        type: type,
+        src: rawSrc
+      }, (err) => {
+        if (!err) { veeAlert('Lesson published successfully!'); document.getElementById('addVideoForm').reset(); }
+      });
+    }
+
+    function publishSignal(e) {
+      e.preventDefault();
+      const now = new Date();
+      // Format YYYY/MM/DD HH:MM:SS
+      const timestampFormatted = `${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+
+      database.ref('signals').push({
+        pair: document.getElementById('sigPair').value,
+        type: document.getElementById('sigType').value,
+        entry: document.getElementById('sigEntry').value,
+        sl: document.getElementById('sigSL').value,
+        tp: document.getElementById('sigTP').value,
+        timeStr: timestampFormatted
+      }, (err) => {
+        if (!err) { veeAlert('Signal broadcasted with precision timestamp!'); document.getElementById('addSignalForm').reset(); }
+      });
+    }
+
+    function deleteLesson(id) { veeConfirm('Delete this lesson?', () => database.ref('lessons/' + id).remove()); }
+    function deleteSignal(id) { veeConfirm('Remove this signal?', () => database.ref('signals/' + id).remove()); }
+    function resolveSupport(id) { veeConfirm('Mark resolved / delete record?', () => database.ref('supportMessages/' + id).remove()); }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      database.ref('categories').on('value', (snap) => {
+        const select = document.getElementById('videoCategory');
+        const listDiv = document.getElementById('adminCategoriesList');
+        select.innerHTML = '';
+        listDiv.innerHTML = '';
+        const data = snap.val();
+        if (!data) {
+          select.innerHTML = '<option value="Forex Foundations">Forex Foundations</option>';
+          listDiv.innerHTML = '<p style="color:#64748b; font-size:0.8rem;">No custom categories yet.</p>';
+          return;
+        }
+        Object.keys(data).forEach(key => {
+          const catName = data[key];
+          select.innerHTML += `<option value="${catName}">${catName}</option>`;
+          listDiv.innerHTML += `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:6px; border:1px solid #e2e8f0; border-radius:4px; font-size:0.85rem;">
+              <span><strong>${catName}</strong></span>
+              <div style="display:flex; gap:6px;">
+                <button class="btn" style="padding:2px 6px; font-size:0.7rem;" onclick="editCategory('${key}', '${catName}')">Edit</button>
+                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteCategory('${key}')">Delete</button>
+              </div>
+            </div>`;
+        });
+      });
+
+      database.ref('featuredCards').on('value', (snap) => {
+        const listDiv = document.getElementById('adminFeaturedList');
+        listDiv.innerHTML = '';
+        const data = snap.val();
+        if (!data) {
+          listDiv.innerHTML = '<p style="color:#64748b; font-size:0.8rem;">Default home cards active. Add custom ones above.</p>';
+          return;
+        }
+        Object.keys(data).forEach(key => {
+          const f = data[key];
+          listDiv.innerHTML += `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:8px; border:1px solid #e2e8f0; border-radius:4px; font-size:0.85rem;">
+              <div>
+                <strong>${f.title}</strong> <span style="font-size:0.75rem; color:#64748b;">(${f.action})</span>
+                <div style="font-size:0.75rem; color:#475569;">${f.desc}</div>
+              </div>
+              <div style="display:flex; gap:6px;">
+                <button class="btn" style="padding:2px 6px; font-size:0.7rem;" onclick="editFeatured('${key}', '${f.title}', '${f.desc}', '${f.action}', '${f.img || ''}')">Edit</button>
+                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteFeatured('${key}')">Delete</button>
+              </div>
+            </div>`;
+        });
+      });
+
+      database.ref('chartChat').on('value', (snap) => {
+        const stream = document.getElementById('adminGlobalChatStream');
+        stream.innerHTML = '';
+        const data = snap.val();
+        if (!data) {
+          stream.innerHTML = '<p style="color:#64748b; font-style:italic;">No messages in chat stream.</p>';
+          return;
+        }
+        Object.keys(data).forEach(msgKey => {
+          const m = data[msgKey];
+          stream.innerHTML += `
+            <div style="background:white; border:1px solid #e2e8f0; padding:6px; margin-bottom:6px; border-radius:4px; font-size:0.8rem;">
+              <strong>${m.sender}:</strong> ${m.text}
+              <div style="margin-top:4px; display:flex; gap:6px;">
+                <button class="btn" style="padding:2px 6px; font-size:0.65rem;" onclick="adminEditMessage('${msgKey}', '${m.text}')">Edit</button>
+                <button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem;" onclick="adminDeleteMessage('${msgKey}')">Delete</button>
+              </div>
+            </div>`;
+        });
+      });
+
+      database.ref('reportedMessages').on('value', (snap) => {
+        const inbox = document.getElementById('reportedMessagesInbox');
+        inbox.innerHTML = '';
+        const data = snap.val();
+        if (!data) {
+          inbox.innerHTML = '<p style="color:#64748b; font-style:italic;">No reported messages pending moderation.</p>';
+          return;
+        }
+        Object.keys(data).forEach(reportId => {
+          const rep = data[reportId];
+          database.ref('chartChat/' + rep.messageKey).once('value', (msgSnap) => {
+            const msgData = msgSnap.val();
+            const textContent = msgData ? msgData.text : '[Message already deleted]';
+            inbox.innerHTML += `
+              <div class="message-card">
+                <div class="message-meta"><span>Reported by student</span></div>
+                <div style="margin-bottom:0.5rem; color:#dc3545;">"${textContent}"</div>
+                <button class="btn btn-danger" onclick="deleteReportedMessage('${reportId}', '${rep.messageKey}')">Delete Message</button>
+                <button class="btn" style="background:#64748b;" onclick="dismissReport('${reportId}')">Dismiss Report</button>
+              </div>`;
+          });
+        });
+      });
+
+      database.ref('lessons').on('value', (snap) => {
+        const tbody = document.getElementById('adminLessonsTable');
+        tbody.innerHTML = '';
+        const data = snap.val();
+        if (!data) { tbody.innerHTML = '<tr><td colspan="4">No lessons found.</td></tr>'; return; }
+        Object.keys(data).forEach(id => {
+          const l = data[id];
+          tbody.innerHTML += `<tr><td><strong>${l.title}</strong></td><td>${l.category}</td><td>${l.type.toUpperCase()}</td><td><button class="btn btn-danger" onclick="deleteLesson('${id}')">Delete</button></td></tr>`;
+        });
+      });
+
+      database.ref('signals').on('value', (snap) => {
+        const tbody = document.getElementById('adminSignalsTable');
+        tbody.innerHTML = '';
+        const data = snap.val();
+        if (!data) { tbody.innerHTML = '<tr><td colspan="4">No active signals.</td></tr>'; return; }
+        Object.keys(data).forEach(id => {
+          const s = data[id];
+          const timeDisplay = s.timeStr || 'Recently published';
+          tbody.innerHTML += `<tr><td><strong>${s.pair}</strong> (${s.type})</td><td>Entry: ${s.entry} | SL: ${s.sl} | TP: ${s.tp}</td><td style="font-size:0.75rem; color:#475569;">${timeDisplay}</td><td><button class="btn btn-danger" onclick="deleteSignal('${id}')">Remove</button></td></tr>`;
+        });
+      });
+
+      database.ref('supportMessages').on('value', (snap) => {
+        const inbox = document.getElementById('adminSupportInbox');
+        inbox.innerHTML = '';
+        const data = snap.val();
+        if (!data) { inbox.innerHTML = '<p style="color:#64748b;">No pending student messages.</p>'; return; }
+        Object.keys(data).forEach(id => {
+          const m = data[id];
+          inbox.innerHTML += `
+            <div class="message-card">
+              <div class="message-meta"><span><strong>${m.student}</strong> (${m.email})</span><span>${m.date}</span></div>
+              <div style="margin-bottom:0.5rem;">${m.message}</div>
+              ${m.reply ? `<p style="color:var(--success); margin-bottom:0.5rem;"><strong>${m.reply}</strong></p>` : ''}
+              <button class="btn" style="background:#0d6efd; margin-right:6px;" onclick="replySupport('${id}')">Reply Student</button>
+              <button class="btn btn-danger" onclick="resolveSupport('${id}')">Mark Resolved / Delete</button>
+            </div>`;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
