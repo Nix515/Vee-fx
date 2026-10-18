@@ -219,7 +219,7 @@
       <div style="background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; margin-bottom: 1.25rem; display:flex; justify-content:space-between; align-items:center;">
         <div>
           <h1 style="font-size: 1.25rem; margin-bottom: 0.3rem;" id="userWelcome">Welcome Back, Trader</h1>
-          <p style="color: #64748b; font-size: 0.85rem;" id="userEmailDisplay">Active Student Profile</p>
+          <p style="color: #64748b; font-size: 0.85rem;" id="userEmailDisplay">Student Profile</p>
         </div>
         <button class="btn" style="background:#0d6efd;" onclick="openEditUsernameModal()">Edit Username [STUDENT]</button>
       </div>
@@ -567,7 +567,7 @@
       historyLog.forEach(h => {
         container.innerHTML += `
           <div style="padding: 4px 0; font-size: 0.8rem;">
-            🕒 Visited <a onclick="switchView('${h.view || 'home'}')" style="cursor:pointer; color:#0d6efd; text-decoration:underline; font-weight:bold;">${h.page}</a> <span style="color: #475569;">(Last updated: ${h.time})</span>
+            Visited <a onclick="switchView('${h.view || 'home'}')" style="cursor:pointer; color:#0d6efd; text-decoration:underline; font-weight:bold;">${h.page}</a> <span style="color: #475569;">(Last updated: ${h.time})</span>
           </div>`;
       });
     }
@@ -834,7 +834,7 @@
 
           let actionBtns = `
             <div style="margin-top:4px; display:flex; gap:8px; font-size:0.7rem; justify-content:space-between; align-items:center;">
-              <button style="background:none; border:none; color:#0d6efd; cursor:pointer; font-weight:bold;" onclick="setReplyTarget('${isOfficial ? 'OFFICIAL ADMIN' : m.sender}', '${m.text.replace(/'/g, "\\'")}')">Reply 💬</button>`;
+              <button style="background:none; border:none; color:#0d6efd; cursor:pointer; font-weight:bold;" onclick="setReplyTarget('${isOfficial ? 'OFFICIAL ADMIN' : m.sender}', '${m.text.replace(/'/g, "\\'")}')">Reply</button>`;
           
           if (isSelf && !isOfficial) {
             actionBtns += `
