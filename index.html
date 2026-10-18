@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VEE FX | Professional Forex Education & Student Portal</title>
+
+  <!-- Google Analytics Tracking -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZZSV775FDX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-ZZSV775FDX');
+  </script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDglPYCIZLTbTOMl7cZvZ_GwPeKzacAfhw",
+      authDomain: "vee-fxx.firebaseapp.com",
+      databaseURL: "https://vee-fxx-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "vee-fxx",
+      storageBucket: "vee-fxx.firebasestorage.app",
+      messagingSenderId: "924394563283",
+      appId: "1:924394563283:web:cfd15221909ad761f39626",
+      measurementId: "G-XSSW65TWEE"
+    };
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+  </script>
+
+  <style>
+    :root {
+      --bg-alice: #f4f6f8;
+      --text-dark: #333333;
+      --card-bg: #ffffff;
+      --border-color: #cbd5e1;
+      --accent: #1e293b;
+      --accent-hover: #334155;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background-color: var(--bg-alice); color: var(--text-dark); line-height: 1.5; padding-bottom: calc(65px + var(--safe-area-bottom)); font-size: 14px; }
+    
+    header { background: #ffffff; border-bottom: 1px solid var(--border-color); padding: 0.6rem 1rem; position: sticky; top: 0; z-index: 90; }
+    .top-nav { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 0 auto; }
+    .logo { font-size: 1.1rem; font-weight: bold; color: var(--text-dark); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+    
+    .nav-links { display: flex; gap: 1rem; align-items: center; list-style: none; }
+    .nav-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.85rem; cursor: pointer; }
+    .nav-links a:hover, .nav-links a.active { color: var(--success); }
+
+    /* Hamburger Menu Button */
+    .menu-toggle-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 4px; z-index: 110; }
+    .menu-toggle-btn span { display: block; width: 22px; height: 2px; background: var(--text-dark); border-radius: 2px; transition: 0.3s; }
+
+    /* Slide-in Sidebar Menu */
+    .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.5); z-index: 150; }
+    .sidebar-overlay.active { display: block; }
+    .sidebar { position: fixed; top: 0; right: -280px; width: 280px; height: 100%; background: #ffffff; box-shadow: -4px 0 15px rgba(0,0,0,0.1); z-index: 160; transition: right 0.3s ease; display: flex; flex-direction: column; padding: 1.25rem; }
+    .sidebar.active { right: 0; }
+    .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; }
+    .sidebar-links { display: flex; flex-direction: column; gap: 0.75rem; list-style: none; overflow-y: auto; }
+    .sidebar-links a { text-decoration: none; color: var(--text-dark); font-weight: 600; font-size: 0.95rem; padding: 8px 10px; border-radius: 4px; cursor: pointer; display: block; transition: background 0.15s; }
+    .sidebar-links a:hover, .sidebar-links a.active { background: #f1f5f9; color: var(--success); }
+    
+    .btn { background: var(--accent); color: white; padding: 0.45rem 0.9rem; border-radius: 4px; text-decoration: none; border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem; transition: background 0.15s; }
+    .btn:hover { background: var(--accent-hover); }
+    .btn-danger { background: var(--danger); }
+
+    .container { max-width: 900px; margin: 1.2rem auto; padding: 0 0.85rem; }
+    .view-section { display: none; }
+    .view-section.active { display: block; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 6px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.03); display: flex; flex-direction: column; justify-content: space-between; position: relative; }
+    .card h3 { font-size: 0.95rem; font-weight: bold; margin-bottom: 0.35rem; }
+    .card p { font-size: 0.8rem; color: #64748b; margin-bottom: 0.75rem; }
+
+    .card-img-preview { width: 100%; height: 110px; object-fit: cover; border-radius: 4px; margin-bottom: 0.5rem; background: #e2e8f0; }
+
+    .fav-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      z-index: 5;
+    }
+    .fav-btn svg { width: 18px; height: 18px; fill: #cbd5e1; transition: fill 0.2s; }
+    .fav-btn.favorited svg { fill: #dc3545; }
+
+    .media-container { width: 100%; border-radius: 4px; margin-bottom: 0.6rem; height: 160px; background: #0f172a; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+    .media-container iframe, .media-container video { width: 100%; height: 100%; border: none; object-fit: cover; }
+
+    .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 0.45rem 0; z-index: 100; box-shadow: 0 -2px 5px rgba(0,0,0,0.04); padding-bottom: calc(0.45rem + var(--safe-area-bottom)); }
+    .bottom-nav a { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.72rem; display: flex; flex-direction: column; align-items: center; gap: 0.15rem; cursor: pointer; }
+    .bottom-nav a.active { color: var(--success); }
+    .nav-logo { width: 20px; height: 20px; fill: currentColor; }
+
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; background: white; border-radius: 6px; overflow: hidden; margin-top: 0.5rem; }
+    .data-table th, .data-table td { border: 1px solid var(--border-color); padding: 0.65rem; text-align: left; }
+    .data-table th { background-color: #f8fafc; font-weight: bold; }
+
+    textarea, input { width: 100%; padding: 0.55rem; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 0.25rem; margin-bottom: 0.85rem; font-size: 0.85rem; outline: none; }
+
+    /* Interactive Chat Room Styles */
+    .chat-box { background: white; border: 1px solid var(--border-color); border-radius: 6px; display: flex; flex-direction: column; height: 70vh; overflow: hidden; }
+    .chat-header-bar { padding: 8px 12px; background: #f8fafc; border-bottom: 1px solid var(--border-color); font-size: 0.8rem; font-weight: bold; display: flex; justify-content: space-between; align-items: center; }
+    .chat-messages { flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #fafafa; }
+    .msg-card { background: #e9ecef; padding: 8px 12px; border-radius: 6px; max-width: 80%; font-size: 0.85rem; word-break: break-word; position: relative; transition: transform 0.2s; cursor: pointer; }
+    .msg-card.official { background: #d1e7dd; border-left: 4px solid #198754; font-weight: 500; }
+    .msg-card.self { align-self: flex-end; background: #cfe2ff; }
+
+    .reply-preview-banner { display: none; background: #f1f5f9; padding: 6px 10px; border-left: 3px solid #0d6efd; font-size: 0.75rem; justify-content: space-between; align-items: center; margin-bottom: 4px; border-radius: 4px; }
+    .reply-preview-banner.active { display: flex; }
+    
+    .chat-input-area { padding: 10px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 6px; background: #fff; position: relative; }
+    .chat-input-row { display: flex; gap: 8px; width: 100%; }
+
+    .emoji-picker-popup { display: none; position: absolute; bottom: 65px; left: 10px; background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 8px; grid-template-columns: repeat(6, 1fr); gap: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 50; }
+    .emoji-picker-popup.active { display: grid; }
+    .emoji-item { background: none; border: none; font-size: 1.1rem; cursor: pointer; padding: 4px; }
+    .emoji-item:hover { background: #f1f1f1; }
+
+    /* Custom VEE FX Modal Styling */
+    .vee-modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.6); z-index:1000; justify-content:center; align-items:center; }
+    .vee-modal-overlay.active { display:flex; }
+    .vee-modal { background:white; border:1px solid var(--border-color); border-radius:8px; width:90%; max-width:400px; padding:1.25rem; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
+    .vee-modal h3 { font-size:1.05rem; margin-bottom:0.5rem; color:var(--accent); }
+    .vee-modal p { font-size:0.85rem; color:#475569; margin-bottom:1rem; }
+
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    @media (min-width: 769px) { .menu-toggle-btn { display: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- Custom VEE FX Modal -->
+  <div class="vee-modal-overlay" id="veeModalOverlay">
+    <div class="vee-modal">
+      <h3 id="veeModalTitle">VEE FX says</h3>
+      <p id="veeModalMessage">Message content goes here...</p>
+      <div id="veeModalInputContainer" style="margin-bottom:1rem; display:none;">
+        <input type="text" id="veeModalInput" style="margin:0;">
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:8px;" id="veeModalButtons">
+        <button class="btn" id="veeModalOkBtn">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Overlay & Menu Drawer -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <aside class="sidebar" id="appSidebar">
+    <div class="sidebar-header">
+      <span style="font-weight: bold; font-size: 1.05rem; color: var(--accent);">VEE FX Menu</span>
+      <button onclick="toggleSidebar()" style="background:none; border:none; font-size: 1.25rem; cursor:pointer; font-weight:bold; color:#64748b;">&times;</button>
+    </div>
+    <ul class="sidebar-links">
+      <li><a onclick="switchView('home'); toggleSidebar();" id="side-home" class="active">Home</a></li>
+      <li><a onclick="switchView('dashboard'); toggleSidebar();" id="side-dashboard">Dashboard</a></li>
+      <li><a onclick="switchView('lessons'); toggleSidebar();" id="side-lessons">Lessons</a></li>
+      <li><a onclick="switchView('signals'); toggleSidebar();" id="side-signals">Signals</a></li>
+      <li><a onclick="switchView('chartroom'); toggleSidebar();" id="side-chartroom">Charting Room</a></li>
+      <li><a onclick="switchView('support'); toggleSidebar();" id="side-support">Support</a></li>
+      <li><a onclick="switchView('about'); toggleSidebar();" id="side-about">About Us</a></li>
+      <li><a onclick="switchView('terms'); toggleSidebar();" id="side-terms">Terms & Conditions</a></li>
+    </ul>
+  </aside>
+
+  <!-- Top Navigation Header -->
+  <header>
+    <div class="top-nav">
+      <a onclick="switchView('home')" class="logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#16a34a"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.09-4-4L2 15.08l1.5 1.41z"/></svg>
+        VEE FX
+      </a>
+      <ul class="nav-links">
+        <li><a onclick="switchView('home')" id="lnk-home" class="active">Home</a></li>
+        <li><a onclick="switchView('dashboard')" id="lnk-dashboard">Dashboard</a></li>
+        <li><a onclick="switchView('lessons')" id="lnk-lessons">Lessons</a></li>
+        <li><a onclick="switchView('signals')" id="lnk-signals">Signals</a></li>
+        <li><a onclick="switchView('chartroom')" id="lnk-chartroom">Charting Room</a></li>
+        <li><a onclick="switchView('support')" id="lnk-support">Support</a></li>
+        <li><a onclick="switchView('about')" id="lnk-about">About</a></li>
+        <li><a onclick="switchView('terms')" id="lnk-terms">Terms</a></li>
+      </ul>
+      <button class="menu-toggle-btn" onclick="toggleSidebar()" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 1. HOME VIEW -->
+    <section id="view-home" class="view-section active">
+      <div style="background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem;">
+        <h1 style="font-size: 1.25rem; margin-bottom: 0.3rem;">Master the Forex Market with VEE FX</h1>
+        <p style="color: #64748b; font-size: 0.85rem;">Institutional trading education synchronized directly from Master Traders.</p>
+      </div>
+      <h2 style="font-size: 1rem; margin-bottom: 0.75rem;">Featured Curriculum & Insights</h2>
+      <div class="grid" id="dynamicFeaturedGrid"></div>
+    </section>
+
+    <!-- 2. DASHBOARD VIEW -->
+    <section id="view-dashboard" class="view-section">
+      <div style="background: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 1.25rem; margin-bottom: 1.25rem; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <h1 style="font-size: 1.25rem; margin-bottom: 0.3rem;" id="userWelcome">Welcome Back, Trader</h1>
+          <p style="color: #64748b; font-size: 0.85rem;" id="userEmailDisplay">Active Student Profile</p>
+        </div>
+        <button class="btn" style="background:#0d6efd;" onclick="openEditUsernameModal()">Edit Username [STUDENT]</button>
+      </div>
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+        <h2 style="font-size: 1rem;">Saved Favorites</h2>
+        <button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="clearAllFavorites()">Clear Favorites</button>
+      </div>
+      <div id="favoritesList" class="card" style="margin-bottom: 1.25rem; min-height: 80px;">
+        <p style="color: #64748b; font-style: italic; font-size: 0.82rem;">No favorites saved yet. Click the heart logo on any item to save it here.</p>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.5rem;">
+        <h2 style="font-size: 1rem;">Activity History</h2>
+        <button class="btn btn-danger" style="padding:2px 6px; font-size:0.7rem;" onclick="clearAllHistory()">Clear History</button>
+      </div>
+      <div id="historyList" class="card" style="min-height: 80px;">
+        <p style="color: #64748b; font-style: italic; font-size: 0.82rem;">No recorded activity yet.</p>
+      </div>
+    </section>
+
+    <!-- 3. LESSONS VIEW -->
+    <section id="view-lessons" class="view-section">
+      <div style="margin-bottom: 1rem;">
+        <h1 style="font-size: 1.25rem; margin-bottom: 0.25rem;">Forex Video Curriculum</h1>
+        <p style="color: #64748b; font-size: 0.82rem;">Lessons published from the Master Admin Dashboard appear here instantly.</p>
+      </div>
+      <div id="dynamicLessonsContainer" class="grid">
+        <p style="color:#64748b;">Loading lessons from master feed...</p>
+      </div>
+    </section>
+
+    <!-- 4. SIGNALS VIEW -->
+    <section id="view-signals" class="view-section">
+      <div style="margin-bottom: 1rem;">
+        <h1 style="font-size: 1.25rem; margin-bottom: 0.25rem;">Live Market Signals</h1>
+        <p style="color: #64748b; font-size: 0.82rem;">Real-time trade setups broadcasted with exact UTC timestamps.</p>
+      </div>
+      <div id="dynamicSignalsContainer">
+        <p style="color:#64748b;">Loading active signals...</p>
+      </div>
+    </section>
+
+    <!-- 5. CHARTING / CHAT ROOM VIEW -->
+    <section id="view-chartroom" class="view-section">
+      <div style="margin-bottom: 1rem;">
+        <h1 style="font-size: 1.25rem; margin-bottom: 0.25rem;">Student Charting & Interaction Room</h1>
+        <p style="color: #64748b; font-size: 0.82rem;">Share chart setups, ask questions, and reply directly by sliding/clicking reply.</p>
+      </div>
+      <div class="chat-box">
+        <div class="chat-header-bar">
+          <span>Community Charting Stream</span>
+          <span id="onlineCountBadge" style="color: var(--success);">Online Users: 1</span>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        
+        <div class="emoji-picker-popup" id="emojiPopup">
+          <button type="button" class="emoji-item" onclick="insertEmoji('😊')">😊</button>
+          <button type="button" class="emoji-item" onclick="insertEmoji('📈')">📈</button>
+          <button type="button" class="emoji-item" onclick="insertEmoji('📉')">📉</button>
+          <button type="button" class="emoji-item" onclick="insertEmoji('💡')">💡</button>
+          <button type="button" class="emoji-item" onclick="insertEmoji('🔥')">🔥</button>
+          <button type="button" class="emoji-item" onclick="insertEmoji('🚀')">🚀</button>
+        </div>
+
+        <form class="chat-input-area" onsubmit="sendChatMessage(event)">
+          <div class="reply-preview-banner" id="replyPreviewBanner">
+            <span id="replyingToText" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:80%;">Replying...</span>
+            <button type="button" onclick="cancelReply()" style="background:none; border:none; cursor:pointer; font-weight:bold; font-size:0.9rem;">&times;</button>
+          </div>
+          <div class="chat-input-row">
+            <button type="button" class="btn" style="background:#64748b;" onclick="toggleEmojiPicker()" title="Insert Emoji">😀</button>
+            <input type="text" id="chatInput" placeholder="Type a message or share a chart link..." required autocomplete="off" style="margin:0;">
+            <button type="submit" class="btn">Send</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 6. SUPPORT VIEW -->
+    <section id="view-support" class="view-section">
+      <div class="card" style="max-width: 550px; margin: 0 auto; padding: 1.25rem; margin-bottom: 1rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Contact Student Support</h2>
+        <form id="supportForm" onsubmit="submitSupport(event)">
+          <label style="font-weight: bold; font-size: 0.8rem;">Your Name & Email</label>
+          <input type="text" id="supportName" placeholder="Alex Trader" required>
+          <label style="font-weight: bold; font-size: 0.8rem;">How can we assist you today?</label>
+          <textarea id="supportQuery" rows="4" required placeholder="Type your message here..."></textarea>
+          <button type="submit" class="btn">Send Inquiry to Master Admin</button>
+        </form>
+      </div>
+
+      <div class="card" style="max-width: 550px; margin: 0 auto; padding: 1.25rem;">
+        <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">My Inquiries & Replies</h2>
+        <div id="studentInquiriesThread">
+          <p style="color:#64748b; font-style:italic;">No active inquiries found.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. ABOUT US VIEW -->
+    <section id="view-about" class="view-section">
+      <div class="card" style="margin-bottom: 1.25rem;">
+        <h2 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--accent);">About VEE FX & Astro Software</h2>
+        <p style="font-size: 0.85rem; color: #475569; margin-bottom: 0.75rem;">
+          Welcome to <strong>VEE FX</strong>, an elite educational platform and student portal developed, maintained, and operated under <strong>Astro Software</strong> (accessible via <code>astrosoftware.nl</code>)[span_0](start_span)[span_0](end_span). Our mission is to empower retail traders with institutional trading principles, smart money concepts, advanced risk mitigation frameworks, and real-time market synchronization tools.
+        </p>
+        <p style="font-size: 0.85rem; color: #475569; margin-bottom: 0.75rem;">
+          Whether you are mastering market structure through our curated video lessons, analyzing real-time trade signals, or collaborating with peers in our interactive student charting room, VEE FX is committed to fostering a disciplined, professional, and knowledgeable trading community.
+        </p>
+        <p style="font-size: 0.82rem; color: #64748b;">
+          <strong>Official Contact & Support:</strong><br>
+          Website: <a href="https://astrosoftware.nl" target="_blank" style="color:#0d6efd;">astrosoftware.nl</a>[span_1](start_span)[span_1](end_span)<br>
+          Email: nddnix124@gmail.com[span_2](start_span)[span_2](end_span)<br>
+          Direct Line / Support: 0730519236[span_3](start_span)[span_3](end_span)
+        </p>
+      </div>
+    </section>
+
+    <!-- 8. TERMS & CONDITIONS VIEW -->
+    <section id="view-terms" class="view-section">
+      <div class="card">
+        <h2 style="font-size: 1.15rem; margin-bottom: 0.5rem; color: var(--accent);">Terms & Conditions / Legal Disclaimer</h2>
+        <p style="font-size: 0.82rem; color: #475569; margin-bottom: 0.6rem;">
+          <strong>1. Acceptance of Terms:</strong> By accessing and using <strong>VEE FX</strong> (hosted on <code>astrosoftware.nl</code>)[span_4](start_span)[span_4](end_span), you agree to comply with and be bound by these Terms & Conditions. If you do not agree with any part of these terms, you must discontinue use of the platform immediately.
+        </p>
+        <p style="font-size: 0.82rem; color: #475569; margin-bottom: 0.6rem;">
+          <strong>2. High-Risk Trading Disclaimer:</strong> Trading Foreign Exchange (Forex), cryptocurrencies, and CFDs on margin carries a high level of risk and may not be suitable for all investors. Past performance is not indicative of future results. High leverage can work against you as well as for you. Before deciding to trade, you should carefully consider your investment objectives, level of experience, and risk appetite. You could sustain a loss of some or all of your initial investment.
+        </p>
+        <p style="font-size: 0.82rem; color: #475569; margin-bottom: 0.6rem;">
+          <strong>3. Educational & Informational Purposes Only:</strong> All content provided on VEE FX—including lessons, analytical signals, charts, and community chat messages—is for <strong>educational and informational purposes only</strong>. It should not be construed as professional financial, investment, or legal advice. Astro Software, VEE FX administrators, and platform creators are not licensed financial advisors.
+        </p>
+        <p style="font-size: 0.82rem; color: #475569; margin-bottom: 0.6rem;">
+          <strong>4. User Conduct & Community Chat Rules:</strong> Users participating in the interactive charting room or submitting support inquiries agree not to post abusive, unlawful, promotional, or misleading content. The administration reserves the right to moderate, edit, or delete user content and disable accounts violating platform safety.
+        </p>
+        <p style="font-size: 0.82rem; color: #475569; margin-bottom: 0.6rem;">
+          <strong>5. Limitation of Liability:</strong> Under no circumstances shall Astro Software or VEE FX be held liable for any direct, indirect, incidental, or consequential financial losses arising out of or in connection with the use of our signals, educational materials, or software services.
+        </p>
+        <p style="font-size: 0.82rem; color: #64748b;">
+          For legal inquiries or support concerns, contact us at <strong>nddnix124@gmail.com</strong>[span_5](start_span)[span_5](end_span) or call <strong>0730519236</strong>[span_6](start_span)[span_6](end_span).
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a onclick="switchView('home'); recordHistory('Home Page', 'home');" id="bnav-home" class="active">
+      <svg class="nav-logo" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
+      Home
+    </a>
+    <a onclick="switchView('dashboard'); recordHistory('Dashboard', 'dashboard');" id="bnav-dashboard">
+      <svg class="nav-logo" viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+      Dashboard
+    </a>
+    <a onclick="switchView('lessons'); recordHistory('Lessons', 'lessons');" id="bnav-lessons">
+      <svg class="nav-logo" viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zM8 15l8-4-8-4z"/></svg>
+      Lessons
+    </a>
+    <a onclick="switchView('signals'); recordHistory('Signals', 'signals');" id="bnav-signals">
+      <svg class="nav-logo" viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 10V6h-6z"/></svg>
+      Signals
+    </a>
+    <a onclick="switchView('chartroom'); recordHistory('Charting Room', 'chartroom');" id="bnav-chartroom">
+      <svg class="nav-logo" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c1.1 0 2-.9 2-2V5h14V3zm2 4H9c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0-2-.9-2-2V9c0-1.1-.9-2-2-2zm0 14H9V9h12v12z"/></svg>
+      Chart Room
+    </a>
+    <a onclick="switchView('support'); recordHistory('Support', 'support');" id="bnav-support">
+      <svg class="nav-logo" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+      Support
+    </a>
+  </nav>
+
+  <script>
+    let currentUserId = localStorage.getItem('vee_user_id') || 'student_' + Math.random().toString(36).substr(2, 6);
+    localStorage.setItem('vee_user_id', currentUserId);
+
+    let currentStudentName = localStorage.getItem('vee_username_' + currentUserId) || ('Trader [STUDENT ' + currentUserId.substring(8, 12) + ']');
+    localStorage.setItem('vee_username_' + currentUserId, currentStudentName);
+
+    let activeReplyTarget = null;
+
+    function toggleSidebar() {
+      document.getElementById('appSidebar').classList.toggle('active');
+      document.getElementById('sidebarOverlay').classList.toggle('active');
+    }
+
+    function veeAlert(message, callback) {
+      document.getElementById('veeModalTitle').innerText = 'VEE FX says';
+      document.getElementById('veeModalMessage').innerText = message;
+      document.getElementById('veeModalInputContainer').style.display = 'none';
+      const buttonsDiv = document.getElementById('veeModalButtons');
+      buttonsDiv.innerHTML = `<button class="btn" id="veeModalOkBtn">OK</button>`;
+      document.getElementById('veeModalOverlay').classList.add('active');
+      document.getElementById('veeModalOkBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+        if (callback) callback();
+      };
+    }
+
+    function veeConfirm(message, onYes) {
+      document.getElementById('veeModalTitle').innerText = 'VEE FX confirms';
+      document.getElementById('veeModalMessage').innerText = message;
+      document.getElementById('veeModalInputContainer').style.display = 'none';
+      const buttonsDiv = document.getElementById('veeModalButtons');
+      buttonsDiv.innerHTML = `
+        <button class="btn" style="background:#64748b;" id="veeModalNoBtn">Cancel</button>
+        <button class="btn btn-danger" id="veeModalYesBtn">Confirm</button>`;
+      document.getElementById('veeModalOverlay').classList.add('active');
+      document.getElementById('veeModalNoBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+      };
+      document.getElementById('veeModalYesBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+        onYes();
+      };
+    }
+
+    function veePrompt(message, defaultValue, onSave) {
+      document.getElementById('veeModalTitle').innerText = 'VEE FX input';
+      document.getElementById('veeModalMessage').innerText = message;
+      const inputContainer = document.getElementById('veeModalInputContainer');
+      const inputField = document.getElementById('veeModalInput');
+      inputContainer.style.display = 'block';
+      inputField.value = defaultValue || '';
+      
+      const buttonsDiv = document.getElementById('veeModalButtons');
+      buttonsDiv.innerHTML = `
+        <button class="btn" style="background:#64748b;" id="veeModalCancelBtn">Cancel</button>
+        <button class="btn" id="veeModalSubmitBtn">Save</button>`;
+      document.getElementById('veeModalOverlay').classList.add('active');
+      inputField.focus();
+
+      document.getElementById('veeModalCancelBtn').onclick = () => {
+        document.getElementById('veeModalOverlay').classList.remove('active');
+      };
+      document.getElementById('veeModalSubmitBtn').onclick = () => {
+        const val = inputField.value;
+        document.getElementById('veeModalOverlay').classList.remove('active');
+        if (onSave) onSave(val);
+      };
+    }
+
+    function openEditUsernameModal() {
+      veePrompt('Enter your new display username [STUDENT]:', currentStudentName.replace(' [STUDENT]', ''), (newName) => {
+        if (newName && newName.trim()) {
+          currentStudentName = newName.trim() + ' [STUDENT]';
+          localStorage.setItem('vee_username_' + currentUserId, currentStudentName);
+          document.getElementById('userWelcome').innerText = 'Welcome Back, ' + currentStudentName;
+          veeAlert('Username updated successfully!');
+        }
+      });
+    }
+
+    function switchView(viewId) {
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById('view-' + viewId).classList.add('active');
+
+      document.querySelectorAll('.nav-links a, .bottom-nav a, .sidebar-links a').forEach(a => a.classList.remove('active'));
+      const topLink = document.getElementById('lnk-' + viewId);
+      const bnavLink = document.getElementById('bnav-' + viewId);
+      const sideLink = document.getElementById('side-' + viewId);
+      if (topLink) topLink.classList.add('active');
+      if (bnavLink) bnavLink.classList.add('active');
+      if (sideLink) sideLink.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    let favorites = JSON.parse(localStorage.getItem('vee_favorites_' + currentUserId) || '[]');
+    let historyLog = JSON.parse(localStorage.getItem('vee_history_' + currentUserId) || '[]');
+
+    function toggleFavorite(btn, title, type, targetView) {
+      const idx = favorites.findIndex(f => f.title === title);
+      if (idx > -1) {
+        favorites.splice(idx, 1);
+        btn.classList.remove('favorited');
+      } else {
+        favorites.push({ title, type, targetView, date: new Date().toLocaleDateString() });
+        btn.classList.add('favorited');
+      }
+      localStorage.setItem('vee_favorites_' + currentUserId, JSON.stringify(favorites));
+      renderFavorites();
+    }
+
+    function removeFavorite(title) {
+      favorites = favorites.filter(f => f.title !== title);
+      localStorage.setItem('vee_favorites_' + currentUserId, JSON.stringify(favorites));
+      renderFavorites();
+    }
+
+    function clearAllFavorites() {
+      veeConfirm('Clear all saved favorites?', () => {
+        favorites = [];
+        localStorage.setItem('vee_favorites_' + currentUserId, JSON.stringify(favorites));
+        renderFavorites();
+      });
+    }
+
+    function renderFavorites() {
+      const container = document.getElementById('favoritesList');
+      if (favorites.length === 0) {
+        container.innerHTML = '<p style="color: #64748b; font-style: italic; font-size: 0.82rem;">No favorites saved yet. Click the heart logo on any item to save it here.</p>';
+        return;
+      }
+      container.innerHTML = '';
+      favorites.forEach(f => {
+        container.innerHTML += `
+          <div style="display:flex; justify-content:space-between; align-items:center; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem;">
+            <a onclick="switchView('${f.targetView || 'home'}')" style="cursor:pointer; color:#0d6efd; text-decoration:underline;">❤️ <strong>${f.title}</strong> <span style="font-size:0.75rem; color:#64748b;">(${f.type})</span></a>
+            <button class="btn btn-danger" style="padding:2px 6px; font-size:0.65rem;" onclick="removeFavorite('${f.title}')">Remove</button>
+          </div>`;
+      });
+    }
+
+    function recordHistory(pageName, viewId) {
+      const timeStr = new Date().toLocaleTimeString();
+      const existingIdx = historyLog.findIndex(h => h.page === pageName);
+      if (existingIdx > -1) {
+        historyLog[existingIdx].time = timeStr;
+        const item = historyLog.splice(existingIdx, 1)[0];
+        historyLog.unshift(item);
+      } else {
+        historyLog.unshift({ page: pageName, view: viewId, time: timeStr });
+        if (historyLog.length > 10) historyLog.pop();
+      }
+      localStorage.setItem('vee_history_' + currentUserId, JSON.stringify(historyLog));
+      renderHistory();
+    }
+
+    function clearAllHistory() {
+      veeConfirm('Clear your activity history?', () => {
+        historyLog = [];
+        localStorage.setItem('vee_history_' + currentUserId, JSON.stringify(historyLog));
+        renderHistory();
+      });
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('historyList');
+      if (historyLog.length === 0) {
+        container.innerHTML = '<p style="color: #64748b; font-style: italic; font-size: 0.82rem;">No recorded activity yet.</p>';
+        return;
+      }
+      container.innerHTML = '';
+      historyLog.forEach(h => {
+        container.innerHTML += `
+          <div style="padding: 4px 0; font-size: 0.8rem;">
+            🕒 Visited <a onclick="switchView('${h.view || 'home'}')" style="cursor:pointer; color:#0d6efd; text-decoration:underline; font-weight:bold;">${h.page}</a> <span style="color: #475569;">(Last updated: ${h.time})</span>
+          </div>`;
+      });
+    }
+
+    function toggleEmojiPicker() {
+      document.getElementById('emojiPopup').classList.toggle('active');
+    }
+    function insertEmoji(emoji) {
+      const input = document.getElementById('chatInput');
+      input.value += emoji;
+      input.focus();
+      document.getElementById('emojiPopup').classList.remove('active');
+    }
+
+    function submitSupport(e) {
+      e.preventDefault();
+      const name = document.getElementById('supportName').value;
+      const message = document.getElementById('supportQuery').value;
+      
+      database.ref('supportMessages').push({
+        studentId: currentUserId,
+        student: name,
+        email: name.toLowerCase().replace(/\s+/g, '') + '@student.com',
+        message: message,
+        date: new Date().toLocaleDateString(),
+        reply: ''
+      }, (error) => {
+        if (!error) {
+          veeAlert('Inquiry sent successfully to Master Dashboard.');
+          document.getElementById('supportForm').reset();
+        } else {
+          veeAlert('Connection error. Please try again.');
+        }
+      });
+    }
+
+    function studentReplyInquiry(inquiryId) {
+      veePrompt('Enter your reply:', '', (replyText) => {
+        if (!replyText) return;
+        database.ref('supportMessages/' + inquiryId).update({
+          reply: 'Student: ' + replyText
+        });
+      });
+    }
+
+    function setReplyTarget(senderName, messageText) {
+      activeReplyTarget = { sender: senderName, text: messageText };
+      document.getElementById('replyingToText').innerText = `Replying to ${senderName}: "${messageText}"`;
+      document.getElementById('replyPreviewBanner').classList.add('active');
+      document.getElementById('chatInput').focus();
+    }
+
+    function cancelReply() {
+      activeReplyTarget = null;
+      document.getElementById('replyPreviewBanner').classList.remove('active');
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const messagePayload = {
+        sender: currentStudentName,
+        text: text,
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        isOfficial: false
+      };
+
+      if (activeReplyTarget) {
+        messagePayload.replyToSender = activeReplyTarget.sender;
+        messagePayload.replyToText = activeReplyTarget.text;
+      }
+
+      database.ref('chartChat').push(messagePayload, (err) => {
+        if (!err) {
+          input.value = '';
+          cancelReply();
+        }
+      });
+    }
+
+    function editStudentMessage(msgKey, oldText) {
+      veePrompt('Edit your message:', oldText, (newText) => {
+        if (newText !== null && newText.trim() !== '') {
+          database.ref('chartChat/' + msgKey).update({ text: newText.trim() });
+        }
+      });
+    }
+
+    function deleteStudentMessage(msgKey) {
+      veeConfirm('Delete this message?', () => {
+        database.ref('chartChat/' + msgKey).remove();
+      });
+    }
+
+    function reportMessage(msgKey) {
+      database.ref('reportedMessages/' + msgKey).set({
+        messageKey: msgKey,
+        reportedBy: currentStudentName,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      }, (err) => {
+        if (!err) veeAlert('Message reported to Master Admin.');
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('userWelcome').innerText = 'Welcome Back, ' + currentStudentName;
+      renderFavorites();
+      renderHistory();
+
+      const presenceRef = database.ref('presence/' + currentUserId);
+      presenceRef.set(true);
+      presenceRef.onDisconnect().remove();
+
+      database.ref('presence').on('value', (snap) => {
+        const count = snap.numChildren() || 1;
+        document.getElementById('onlineCountBadge').innerText = 'Online Users: ' + count;
+      });
+
+      // Emergency Switch Enforcement Check
+      database.ref('masterSwitchState').on('value', (snap) => {
+        const enabled = snap.val();
+        if (enabled === false) {
+          document.body.innerHTML = `
+            <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; text-align:center; padding:1.5rem;">
+              <h1 style="color:#dc2626; margin-bottom:0.5rem;">Platform Temporarily Disabled</h1>
+              <p style="color:#475569; max-width:400px;">The master administrator has temporarily disabled platform access for security and maintenance. Please check back later.</p>
+            </div>`;
+        }
+      });
+
+      // Sync Featured Cards (Home View)
+      database.ref('featuredCards').on('value', (snapshot) => {
+        const grid = document.getElementById('dynamicFeaturedGrid');
+        grid.innerHTML = '';
+        const data = snapshot.val();
+        if (!data) {
+          grid.innerHTML = `
+            <div class="card">
+              <button class="fav-btn" onclick="toggleFavorite(this, 'Market Structure Modules', 'lesson', 'lessons')" title="Save Favorite">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </button>
+              <h3>Market Structure Modules</h3>
+              <p>Master liquidity, market swings, and order flow principles.</p>
+              <button class="btn" onclick="switchView('lessons')">Watch Lessons</button>
+            </div>
+            <div class="card">
+              <button class="fav-btn" onclick="toggleFavorite(this, 'Live Market Signals', 'signal', 'signals')" title="Save Favorite">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </button>
+              <h3>Live Market Signals</h3>
+              <p>Access real-time technical setups and trade execution updates.</p>
+              <button class="btn" onclick="switchView('signals')">View Signals</button>
+            </div>
+            <div class="card">
+              <button class="fav-btn" onclick="toggleFavorite(this, 'Interactive Charting Room', 'chart', 'chartroom')" title="Save Favorite">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </button>
+              <h3>Interactive Charting Room</h3>
+              <p>Publish charts, discuss setups, and chat with peers in real-time.</p>
+              <button class="btn" onclick="switchView('chartroom')">Open Chart Room</button>
+            </div>`;
+          return;
+        }
+
+        Object.keys(data).forEach(key => {
+          const f = data[key];
+          grid.innerHTML += `
+            <div class="card">
+              <button class="fav-btn" onclick="toggleFavorite(this, '${f.title}', 'feature', '${f.action}')" title="Save Favorite">
+                <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </button>
+              ${f.img ? `<img src="${f.img}" class="card-img-preview" alt="Preview">` : ''}
+              <h3>${f.title}</h3>
+              <p>${f.desc}</p>
+              <button class="btn" onclick="switchView('${f.action}')">${f.action === 'lessons' ? 'Watch Lessons' : f.action === 'signals' ? 'View Signals' : 'Open Chart Room'}</button>
+            </div>`;
+        });
+      });
+
+      // Sync Lessons
+      database.ref('lessons').on('value', (snapshot) => {
+        const container = document.getElementById('dynamicLessonsContainer');
+        container.innerHTML = '';
+        const data = snapshot.val();
+        if (!data) {
+          container.innerHTML = '<p style="color:#64748b;">No video lessons published yet.</p>';
+          return;
+        }
+        Object.keys(data).forEach(key => {
+          const l = data[key];
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <button class="fav-btn" onclick="toggleFavorite(this, '${l.title}', 'lesson', 'lessons')" title="Save Favorite">
+              <svg viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            </button>
+            <h3>${l.title}</h3>
+            <p><strong>Category:</strong> ${l.category}</p>
+            <p>${l.description}</p>
+            <div class="media-container">
+              ${l.type === 'youtube' 
+                ? `<iframe src="${l.src}" allowfullscreen></iframe>` 
+                : `<video controls><source src="${l.src}" type="video/mp4"></video>`}
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      });
+
+      // Sync Signals with Precision Timestamps
+      database.ref('signals').on('value', (snapshot) => {
+        const container = document.getElementById('dynamicSignalsContainer');
+        container.innerHTML = '';
+        const data = snapshot.val();
+        if (!data) {
+          container.innerHTML = '<p style="color:#64748b;">No active market signals posted.</p>';
+          return;
+        }
+        const table = document.createElement('table');
+        table.className = 'data-table';
+        table.innerHTML = `<thead><tr><th>Pair</th><th>Action</th><th>Entry / SL / TP</th><th>Published Time (UTC)</th></tr></thead><tbody id="sigRows"></tbody>`;
+        container.appendChild(table);
+
+        const tbody = document.getElementById('sigRows');
+        Object.keys(data).forEach(key => {
+          const s = data[key];
+          const timeDisplay = s.timeStr || 'Recently published';
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>${s.pair}</strong></td>
+              <td><span style="color:${s.type.includes('BUY') ? 'var(--success)' : 'var(--danger)'}; font-weight:bold;">${s.type}</span></td>
+              <td>Entry: ${s.entry} | SL: ${s.sl} | TP: ${s.tp}</td>
+              <td style="font-size:0.8rem; font-weight:600; color:#475569;">${timeDisplay}</td>
+            </tr>`;
+        });
+      });
+
+      // Sync Chat Room messages with Swipe/Reply
+      database.ref('chartChat').on('value', (snapshot) => {
+        const container = document.getElementById('chatMessages');
+        container.innerHTML = '';
+        const data = snapshot.val();
+        if (!data) {
+          container.innerHTML = '<p style="color:#64748b; font-style:italic;">No messages in the charting room yet.</p>';
+          return;
+        }
+        Object.keys(data).forEach(key => {
+          const m = data[key];
+          const isSelf = m.sender === currentStudentName;
+          const isOfficial = m.isOfficial === true;
+          const div = document.createElement('div');
+          div.className = `msg-card ${isSelf ? 'self' : ''} ${isOfficial ? 'official' : ''}`;
+          
+          let replyQuoteHtml = '';
+          if (m.replyToSender && m.replyToText) {
+            replyQuoteHtml = `
+              <div style="background:rgba(0,0,0,0.05); border-left:3px solid #0d6efd; padding:4px 6px; margin-bottom:4px; font-size:0.75rem; border-radius:3px;">
+                <strong>Replying to ${m.replyToSender}:</strong> ${m.replyToText}
+              </div>`;
+          }
+
+          let actionBtns = `
+            <div style="margin-top:4px; display:flex; gap:8px; font-size:0.7rem; justify-content:space-between; align-items:center;">
+              <button style="background:none; border:none; color:#0d6efd; cursor:pointer; font-weight:bold;" onclick="setReplyTarget('${isOfficial ? 'OFFICIAL ADMIN' : m.sender}', '${m.text.replace(/'/g, "\\'")}')">Reply 💬</button>`;
+          
+          if (isSelf && !isOfficial) {
+            actionBtns += `
+              <div>
+                <button style="background:none; border:none; color:#0d6efd; cursor:pointer;" onclick="editStudentMessage('${key}', '${m.text}')">Edit</button>
+                <button style="background:none; border:none; color:#dc3545; cursor:pointer;" onclick="deleteStudentMessage('${key}')">Delete</button>
+              </div>`;
+          } else if (!isOfficial) {
+            actionBtns += `<button style="background:none; border:none; color:#dc3545; font-size:0.65rem; cursor:pointer;" onclick="reportMessage('${key}')">Report</button>`;
+          }
+          actionBtns += `</div>`;
+
+          div.innerHTML = `
+            <div style="font-size:0.7rem; color:#64748b; margin-bottom:2px;">${isOfficial ? 'OFFICIAL ADMIN' : m.sender}</div>
+            ${replyQuoteHtml}
+            <div>${m.text}</div>
+            ${actionBtns}
+          `;
+          container.appendChild(div);
+        });
+        container.scrollTop = container.scrollHeight;
+      });
+
+      database.ref('supportMessages').on('value', (snapshot) => {
+        const container = document.getElementById('studentInquiriesThread');
+        container.innerHTML = '';
+        const data = snapshot.val();
+        if (!data) {
+          container.innerHTML = '<p style="color:#64748b; font-style:italic;">No active inquiries found.</p>';
+          return;
+        }
+        Object.keys(data).forEach(id => {
+          const item = data[id];
+          if (item.studentId === currentUserId) {
+            container.innerHTML += `
+              <div style="border-bottom:1px solid #f1f5f9; padding:8px 0; font-size:0.85rem;">
+                <p><strong>Q:</strong> ${item.message}</p>
+                ${item.reply ? `<p style="color:var(--success); margin-top:4px;"><strong>Reply:</strong> ${item.reply}</p>` : '<p style="color:#64748b; font-style:italic; font-size:0.75rem;">Awaiting admin reply...</p>'}
+                <button class="btn" style="padding:2px 6px; font-size:0.7rem; margin-top:4px;" onclick="studentReplyInquiry('${id}')">Add Reply</button>
+              </div>`;
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
+
